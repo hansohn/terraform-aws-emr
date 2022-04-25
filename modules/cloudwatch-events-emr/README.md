@@ -5,8 +5,8 @@
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.13.0 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 2.0 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 4.0 |
 
 ## Providers
 
@@ -16,8 +16,8 @@ No providers.
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_cloudwatch_event_rule_emr"></a> [cloudwatch\_event\_rule\_emr](#module\_cloudwatch\_event\_rule\_emr) | git::https://gitlab.hrt.io/Infrastructure/terraform/terraform-aws-cloudwatch.git//modules/cloudwatch-event-rule | 1.0.0 |
-| <a name="module_cloudwatch_event_target_emr_sns"></a> [cloudwatch\_event\_target\_emr\_sns](#module\_cloudwatch\_event\_target\_emr\_sns) | git::https://gitlab.hrt.io/Infrastructure/terraform/terraform-aws-cloudwatch.git//modules/cloudwatch-event-target | 1.0.0 |
+| <a name="module_cloudwatch_event_rule_emr"></a> [cloudwatch\_event\_rule\_emr](#module\_cloudwatch\_event\_rule\_emr) |  | n/a |
+| <a name="module_cloudwatch_event_target_emr_sns"></a> [cloudwatch\_event\_target\_emr\_sns](#module\_cloudwatch\_event\_target\_emr\_sns) |  | n/a |
 | <a name="module_this"></a> [this](#module\_this) | cloudposse/label/null | 0.25.0 |
 
 ## Resources

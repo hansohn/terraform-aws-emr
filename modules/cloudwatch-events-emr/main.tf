@@ -10,7 +10,7 @@ locals {
 }
 
 module "cloudwatch_event_rule_emr" {
-  source        = "git::https://gitlab.hrt.io/Infrastructure/terraform/terraform-aws-cloudwatch.git//modules/cloudwatch-event-rule?ref=1.0.0"
+  source        = ""
   context       = module.this.context
   enabled       = module.this.enabled
   name          = coalesce(module.this.name, "emr")
@@ -24,7 +24,7 @@ module "cloudwatch_event_rule_emr" {
 #-------------------------------------------------------------
 
 module "cloudwatch_event_target_emr_sns" {
-  source     = "git::https://gitlab.hrt.io/Infrastructure/terraform/terraform-aws-cloudwatch.git//modules/cloudwatch-event-target?ref=1.0.0"
+  source     = ""
   context    = module.this.context
   attributes = compact(concat(var.attributes, ["sns"]))
   enabled    = module.this.enabled

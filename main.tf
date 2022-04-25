@@ -571,7 +571,7 @@ locals {
 }
 
 # module "cloudwatch_event_rule_emr" {
-#   source        = "git::https://gitlab.hrt.io/Infrastructure/terraform/terraform-aws-cloudwatch.git//modules/cloudwatch-event-rule?ref=1.0.0"
+#   source        = ""
 #   context       = module.label_cloudwatch_rule.context
 #   enabled       = module.this.enabled
 #   event_pattern = local.event_pattern
@@ -579,7 +579,7 @@ locals {
 # }
 # 
 # module "cloudwatch_event_target_emr_sns" {
-#   source  = "git::https://gitlab.hrt.io/Infrastructure/terraform/terraform-aws-cloudwatch.git//modules/cloudwatch-event-target?ref=1.0.0"
+#   source  = ""
 #   context = module.label_cloudwatch_target.context
 #   enabled = module.this.enabled
 #   rule    = module.cloudwatch_event_rule_emr.name
