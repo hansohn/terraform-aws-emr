@@ -1,3 +1,14 @@
+data "aws_region" "current" {}
+data "aws_caller_identity" "current" {}
+
+locals {
+  aws_region = data.aws_region.current.name
+}
+
+data "aws_prefix_list" "s3" {
+  name = "com.amazonaws.${local.aws_region}.s3"
+}
+
 #--------------------------------------------------------------
 # Labeling
 #--------------------------------------------------------------
@@ -100,6 +111,8 @@ emr_managed_master_security_group and emr_managed_slave_security_group.
 # https://docs.aws.amazon.com/emr/latest/ManagementGuide/emr-man-sec-groups.html
 # https://docs.aws.amazon.com/emr/latest/ManagementGuide/emr-clusters-in-a-vpc.html
 
+# emr-managed security group for master instance
+
 resource "aws_security_group" "managed_master" {
   count                  = module.this.enabled ? 1 : 0
   name                   = module.label_master_managed.id
@@ -113,17 +126,63 @@ resource "aws_security_group" "managed_master" {
   }
 }
 
-resource "aws_security_group_rule" "managed_master_egress" {
+resource "aws_security_group_rule" "managed_master_ingress_self" {
   count             = module.this.enabled ? 1 : 0
-  description       = "Allow all egress traffic"
-  type              = "egress"
+  description       = "Allow all ingress traffic from self"
+  type              = "ingress"
   from_port         = 0
   to_port           = 0
   protocol          = "-1"
-  cidr_blocks       = ["0.0.0.0/0"]
-  ipv6_cidr_blocks  = ["::/0"]
+  self              = true
   security_group_id = aws_security_group.managed_master[0].id
 }
+
+resource "aws_security_group_rule" "managed_master_ingress_managed_slave" {
+  count                    = module.this.enabled ? 1 : 0
+  description              = "Allow all ingress traffic from the emr-managed slave security group"
+  type                     = "ingress"
+  from_port                = 0
+  to_port                  = 0
+  protocol                 = "-1"
+  source_security_group_id = aws_security_group.managed_slave[0].id
+  security_group_id        = aws_security_group.managed_master[0].id
+}
+
+resource "aws_security_group_rule" "managed_master_ingress_managed_service" {
+  count                    = module.this.enabled ? 1 : 0
+  description              = "Allow tcp 8443 ingress traffic from the emr-managed service security group"
+  type                     = "ingress"
+  from_port                = "tcp"
+  to_port                  = "tcp"
+  protocol                 = 8443
+  source_security_group_id = aws_security_group.managed_service_access[0].id
+  security_group_id        = aws_security_group.managed_master[0].id
+}
+
+resource "aws_security_group_rule" "managed_master_egress" {
+  count                    = module.this.enabled ? 1 : 0
+  description              = "Allow tcp 9443 egress traffic to the emr-managed service security group"
+  type                     = "egress"
+  from_port                = "tcp"
+  to_port                  = "tcp"
+  protocol                 = "9443"
+  source_security_group_id = aws_security_group.managed_service_access[0].id
+  security_group_id        = aws_security_group.managed_master[0].id
+}
+
+# resource "aws_security_group_rule" "managed_master_egress" {
+#   count             = module.this.enabled ? 1 : 0
+#   description       = "Allow all egress traffic"
+#   type              = "egress"
+#   from_port         = 0
+#   to_port           = 0
+#   protocol          = "-1"
+#   cidr_blocks       = ["0.0.0.0/0"]
+#   ipv6_cidr_blocks  = ["::/0"]
+#   security_group_id = aws_security_group.managed_master[0].id
+# }
+
+# emr-managed security group for core and task instances
 
 resource "aws_security_group" "managed_slave" {
   count                  = module.this.enabled ? 1 : 0
@@ -138,17 +197,96 @@ resource "aws_security_group" "managed_slave" {
   }
 }
 
-resource "aws_security_group_rule" "managed_slave_egress" {
+resource "aws_security_group_rule" "managed_slave_ingress_self" {
   count             = module.this.enabled ? 1 : 0
-  description       = "Allow all egress traffic"
+  description       = "Allow all ingress traffic from self"
+  type              = "ingress"
+  from_port         = 0
+  to_port           = 0
+  protocol          = "-1"
+  self              = true
+  security_group_id = aws_security_group.managed_slave[0].id
+}
+
+resource "aws_security_group_rule" "managed_slave_ingress_managed_master" {
+  count                    = module.this.enabled ? 1 : 0
+  description              = "Allow all ingress traffic from the emr-managed master security group"
+  type                     = "ingress"
+  from_port                = 0
+  to_port                  = 0
+  protocol                 = "-1"
+  source_security_group_id = aws_security_group.managed_slave[0].id
+  security_group_id        = aws_security_group.managed_slave[0].id
+}
+
+resource "aws_security_group_rule" "managed_slave_ingress_managed_service" {
+  count                    = module.this.enabled ? 1 : 0
+  description              = "Allow all ingress traffic from the emr-managed service access security group"
+  type                     = "ingress"
+  from_port                = "tcp"
+  to_port                  = "tcp"
+  protocol                 = 8443
+  source_security_group_id = aws_security_group.managed_service_access[0].id
+  security_group_id        = aws_security_group.managed_slave[0].id
+}
+
+resource "aws_security_group_rule" "managed_slave_egress_s3" {
+  count             = module.this.enabled ? 1 : 0
+  description       = "Allow all egress traffic to s3 prefix list"
+  type              = "egress"
+  from_port         = 0
+  to_port           = 0
+  protocol          = "tcp"
+  prefix_list_ids   = [data.aws_prefix_list.s3.id]
+  security_group_id = aws_security_group.managed_slave[0].id
+}
+
+resource "aws_security_group_rule" "managed_slave_egress_self" {
+  count             = module.this.enabled ? 1 : 0
+  description       = "Allow all egress traffic to self"
   type              = "egress"
   from_port         = 0
   to_port           = 0
   protocol          = "-1"
-  cidr_blocks       = ["0.0.0.0/0"]
-  ipv6_cidr_blocks  = ["::/0"]
+  self              = true
   security_group_id = aws_security_group.managed_slave[0].id
 }
+
+resource "aws_security_group_rule" "managed_slave_egress_master" {
+  count                    = module.this.enabled ? 1 : 0
+  description              = "Allow all egress traffic to the emr-managed master security group"
+  type                     = "egress"
+  from_port                = 0
+  to_port                  = 0
+  protocol                 = "-1"
+  source_security_group_id = aws_security_group.managed_master[0].id
+  security_group_id        = aws_security_group.managed_slave[0].id
+}
+
+resource "aws_security_group_rule" "managed_slave_egress_service" {
+  count                    = module.this.enabled ? 1 : 0
+  description              = "Allow all egress traffic to the emr-managed service access security group"
+  type                     = "egress"
+  from_port                = 9443
+  to_port                  = 9443
+  protocol                 = "tcp"
+  source_security_group_id = aws_security_group.managed_service_access[0].id
+  security_group_id        = aws_security_group.managed_slave[0].id
+}
+
+# resource "aws_security_group_rule" "managed_slave_egress" {
+#   count             = module.this.enabled ? 1 : 0
+#   description       = "Allow all egress traffic"
+#   type              = "egress"
+#   from_port         = 0
+#   to_port           = 0
+#   protocol          = "-1"
+#   cidr_blocks       = ["0.0.0.0/0"]
+#   ipv6_cidr_blocks  = ["::/0"]
+#   security_group_id = aws_security_group.managed_slave[0].id
+# }
+
+# emr-managed security group for service access
 
 resource "aws_security_group" "managed_service_access" {
   count                  = module.this.enabled && var.subnet_type == "private" ? 1 : 0
@@ -174,19 +312,42 @@ resource "aws_security_group_rule" "managed_service_access_ingress" {
   security_group_id        = aws_security_group.managed_service_access[0].id
 }
 
-resource "aws_security_group_rule" "managed_service_access_egress" {
-  count             = module.this.enabled && var.subnet_type == "private" ? 1 : 0
-  description       = "Allow all egress traffic"
-  type              = "egress"
-  from_port         = 0
-  to_port           = 0
-  protocol          = "-1"
-  cidr_blocks       = ["0.0.0.0/0"]
-  ipv6_cidr_blocks  = ["::/0"]
-  security_group_id = aws_security_group.managed_service_access[0].id
+resource "aws_security_group_rule" "managed_service_access_egress_managed_master" {
+  count                    = module.this.enabled && var.subnet_type == "private" ? 1 : 0
+  description              = "Allow tcp 8443 egress traffic to the emr-managed master security group"
+  type                     = "egress"
+  from_port                = 8443
+  to_port                  = 8443
+  protocol                 = "tcp"
+  source_security_group_id = aws_security_group.managed_master[0].id
+  security_group_id        = aws_security_group.managed_service_access[0].id
 }
 
-# Specify additional master and slave security groups
+resource "aws_security_group_rule" "managed_service_access_egress_managed_slave" {
+  count                    = module.this.enabled && var.subnet_type == "private" ? 1 : 0
+  description              = "Allow tcp 8443 egress traffic to the emr-managed slave security group"
+  type                     = "egress"
+  from_port                = 8443
+  to_port                  = 8443
+  protocol                 = "tcp"
+  source_security_group_id = aws_security_group.managed_slave[0].id
+  security_group_id        = aws_security_group.managed_service_access[0].id
+}
+
+# resource "aws_security_group_rule" "managed_service_access_egress" {
+#   count             = module.this.enabled && var.subnet_type == "private" ? 1 : 0
+#   description       = "Allow all egress traffic"
+#   type              = "egress"
+#   from_port         = 0
+#   to_port           = 0
+#   protocol          = "-1"
+#   cidr_blocks       = ["0.0.0.0/0"]
+#   ipv6_cidr_blocks  = ["::/0"]
+#   security_group_id = aws_security_group.managed_service_access[0].id
+# }
+
+# non-managed security group for master instance
+
 resource "aws_security_group" "master" {
   count                  = module.this.enabled ? 1 : 0
   name                   = module.label_master.id
@@ -353,6 +514,7 @@ resource "aws_security_group_rule" "notebook_instance_egress_livy" {
   security_group_id        = aws_security_group.notebook_instance[0].id
 }
 
+#tfsec:ignore:aws-vpc-no-public-egress-sgr
 resource "aws_security_group_rule" "notebook_instance_egress_https" {
   count             = module.this.enabled ? 1 : 0
   description       = "Allow egress traffic to Https"
@@ -394,9 +556,6 @@ locals {
 # Bootstrap
 #--------------------------------------------------------------
 
-data "aws_region" "current" {}
-data "aws_caller_identity" "current" {}
-
 locals {
   bootstrap_script = templatefile(
     "${path.module}/templates/emr_bootstrap.sh.tpl",
@@ -405,7 +564,7 @@ locals {
       environment    = module.this.environment,
       namespace      = module.this.namespace,
       stage          = module.this.stage,
-      aws_region     = data.aws_region.current.name,
+      aws_region     = local.aws_region,
       aws_account_id = data.aws_caller_identity.current.account_id
     }
   )

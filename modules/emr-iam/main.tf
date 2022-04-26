@@ -5,8 +5,8 @@
 data "aws_caller_identity" "current" {}
 
 locals {
-  aws_account_id              = data.aws_caller_identity.current.account_id
-  emr_naming_convention       = split(module.this.delimiter, module.this.id)
+  aws_account_id        = data.aws_caller_identity.current.account_id
+  emr_naming_convention = split(module.this.delimiter, module.this.id)
   # emr_naming_convention       = compact([module.this.namespace, module.this.environment, module.this.stage, module.this.name])
   # emr_wildcard_prefix         = join(module.this.delimiter, local.emr_naming_convention)
   emr_wildcard_arn            = "arn:aws:emr::${local.aws_account_id}:${module.this.id}*"
