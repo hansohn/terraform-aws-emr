@@ -152,9 +152,9 @@ resource "aws_security_group_rule" "managed_master_ingress_managed_service" {
   count                    = module.this.enabled ? 1 : 0
   description              = "Allow tcp 8443 ingress traffic from the emr-managed service security group"
   type                     = "ingress"
-  from_port                = "tcp"
-  to_port                  = "tcp"
-  protocol                 = 8443
+  from_port                = 8443
+  to_port                  = 8443
+  protocol                 = "tcp"
   source_security_group_id = aws_security_group.managed_service_access[0].id
   security_group_id        = aws_security_group.managed_master[0].id
 }
@@ -163,9 +163,9 @@ resource "aws_security_group_rule" "managed_master_egress" {
   count                    = module.this.enabled ? 1 : 0
   description              = "Allow tcp 9443 egress traffic to the emr-managed service security group"
   type                     = "egress"
-  from_port                = "tcp"
-  to_port                  = "tcp"
-  protocol                 = "9443"
+  from_port                = 9443
+  to_port                  = 9443
+  protocol                 = "tcp"
   source_security_group_id = aws_security_group.managed_service_access[0].id
   security_group_id        = aws_security_group.managed_master[0].id
 }
@@ -223,9 +223,9 @@ resource "aws_security_group_rule" "managed_slave_ingress_managed_service" {
   count                    = module.this.enabled ? 1 : 0
   description              = "Allow all ingress traffic from the emr-managed service access security group"
   type                     = "ingress"
-  from_port                = "tcp"
-  to_port                  = "tcp"
-  protocol                 = 8443
+  from_port                = 8443
+  to_port                  = 8443
+  protocol                 = "tcp"
   source_security_group_id = aws_security_group.managed_service_access[0].id
   security_group_id        = aws_security_group.managed_slave[0].id
 }
