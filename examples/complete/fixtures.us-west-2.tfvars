@@ -4,9 +4,9 @@
 
 region = "us-west-2"
 
-namespace = "eg"
+namespace = "hansohn"
 stage     = "test"
-# name      = "vpc"
+# name      = "emr"
 
 availability_zones               = ["us-west-2a", "us-west-2b"]
 cidr_block                       = "10.0.0.0/22"
@@ -14,6 +14,11 @@ enable_dns_support               = true
 enable_dns_hostnames             = true
 assign_generated_ipv6_cidr_block = true
 enable_internet_gateway          = true
+
+enable_dynamic_subnets   = true
+enable_public_network    = true
+enable_protected_network = true
+enable_private_network   = true
 
 default_network_acl_ingress = [
   {
