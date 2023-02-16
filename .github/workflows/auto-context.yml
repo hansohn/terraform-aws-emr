@@ -1,66 +1,57 @@
-name: "auto-context"
+---
+name: auto-context
+
 on:
+  workflow_dispatch:
   schedule:
-  # Update context.tf nightly
-  - cron:  '0 3 * * *'
+    - cron: '0 6 * * 1'
+
+env:
+  CURL: 'curl -fsSL --netrc-optional'
 
 jobs:
   update:
-    if: github.event_name == 'schedule'
     runs-on: ubuntu-latest
+    container: hansohn/terraform:latest
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-    - name: Install dependencies
-      run: |
-        curl -Lo ./terraform-docs.tar.gz https://github.com/terraform-docs/terraform-docs/releases/download/v0.15.0/terraform-docs-v0.15.0-$(uname)-amd64.tar.gz
-        tar -xzf terraform-docs.tar.gz terraform-docs
-        rm -f terraform-docs.tar.gz
-        chmod +x terraform-docs
-        sudo mv terraform-docs /usr/bin/
+      - name: Checkout
+        uses: actions/checkout@v3
 
-    - name: Update context.tf
-      shell: bash
-      id: update
-      env:
-        GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-      run: |
-        if [[ -f context.tf ]]; then
-          echo "Discovered existing context.tf! Fetching most recent version to see if there is an update."
-          curl -o context.tf -fsSL https://raw.githubusercontent.com/cloudposse/terraform-null-label/master/exports/context.tf
-          if git diff --no-patch --exit-code context.tf; then
-            echo "No changes detected! Exiting the job..."
-          else
-            echo "context.tf file has changed. Update examples and rebuild README.md."
-            tmp_file=$(mktemp)
-            terraform-docs --lockfile=false markdown ./ > "$tmp_file"
-            sed -i -ne '/<!-- BEGIN_TF_DOCS -->/ {p; r '"$tmp_file" -e ':a; n; /<!-- END_TF_DOCS -->/ {p; b}; ba}; p' "README.md"
-            rm -f "$tmp_file"
-            echo "::set-output name=create_pull_request::true"
-          fi
-        else
-          echo "This module has not yet been updated to support the context.tf pattern! Please update in order to support automatic updates."
-        fi
+      - name: CVE-2022-24765 fix
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
-    - name: Create Pull Request
-      if: steps.update.outputs.create_pull_request == 'true'
-      uses: cloudposse/actions/github/create-pull-request@0.30.0
-      with:
-        token: ${{ secrets.PUBLIC_REPO_ACCESS_TOKEN }}
-        committer: 'hansohnbot <82293428+hansohnbot@users.noreply.github.com>'
-        author: 'hansohnbot <82293428+hansohnbot@users.noreply.github.com>'
-        commit-message: Update context.tf from origin source
-        title: Update context.tf
-        body: |-
-          ## what
-          This is an auto-generated PR that updates the `context.tf` file to the latest version from `cloudposse/terraform-null-label`
+      - name: Update context.tf
+        id: update
+        shell: bash
+        run: |
+            if [[ -f context.tf ]]; then
+              ${{ env.CURL }} https://raw.githubusercontent.com/cloudposse/terraform-null-label/master/exports/context.tf -o context.tf
+              if ! git diff --no-patch --exit-code context.tf; then
+                echo "context.tf file has been updated. Rebuilding README.md"
+                terraform-docs --output-mode inject --output-file README.md markdown .
+              fi
+            fi
+            echo create_pull_request=true >> $GITHUB_OUTPUT
 
-          ## why
-          To support all the features of the `context` interface.
+      - name: Create Pull Request
+        uses: cloudposse/actions/github/create-pull-request@0.31.0
+        if: steps.update.outputs.create_pull_request == 'true'
+        with:
+          token: ${{ secrets.PUBLIC_REPO_ACCESS_TOKEN }}
+          committer: 'hansohnbot <82293428+hansohnbot@users.noreply.github.com>'
+          author: 'hansohnbot <82293428+hansohnbot@users.noreply.github.com>'
+          commit-message: updating context.tf from upstream origin
+          title: update context.tf
+          body: |-
+            ## what
+            This is an auto-generated PR that updates the `context.tf` file to the latest version from `cloudposse/terraform-null-label`
 
-        branch: auto-update/context.tf
-        base: main
-        delete-branch: true
-        labels: |
-          auto-update
-          context
+            ## why
+            To support all the features of the `context` interface.
+          branch: auto-update/context.tf
+          base: main
+          delete-branch: true
+          labels: |
+            auto-update
+            context
