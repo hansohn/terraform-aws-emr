@@ -23,7 +23,7 @@ output "configurations" {
 }
 
 output "core_instance_group_0_id" {
-  value       = element(concat(aws_emr_cluster.this[*].core_instance_group.0.id, [""]), 0)
+  value       = element(concat(aws_emr_cluster.this[*].core_instance_group[0].id, [""]), 0)
   description = "Core node type Instance Group ID, if using Instance Group for this node type."
 }
 
@@ -43,7 +43,7 @@ output "log_uri" {
 }
 
 output "master_instance_group_0_id" {
-  value       = element(concat(aws_emr_cluster.this[*].master_instance_group.0.id, [""]), 0)
+  value       = element(concat(aws_emr_cluster.this[*].master_instance_group[0].id, [""]), 0)
   description = "Master node type Instance Group ID, if using Instance Group for this node type."
 }
 
