@@ -3,37 +3,37 @@
 #--------------------------------------------------------------
 
 output "managed_master_security_group_id" {
-  value       = element(concat(aws_security_group.managed_master.*.id, [""]), 0)
+  value       = element(concat(aws_security_group.managed_master[*].id, [""]), 0)
   description = "EMR managed_master security group ID"
 }
 
 output "managed_slave_security_group_id" {
-  value       = element(concat(aws_security_group.managed_slave.*.id, [""]), 0)
+  value       = element(concat(aws_security_group.managed_slave[*].id, [""]), 0)
   description = "EMR managed_slave security group ID"
 }
 
 output "managed_service_access_security_group_id" {
-  value       = element(concat(aws_security_group.managed_service_access.*.id, [""]), 0)
+  value       = element(concat(aws_security_group.managed_service_access[*].id, [""]), 0)
   description = "EMR managed_service_access security group ID"
 }
 
 output "master_security_group_id" {
-  value       = element(concat(aws_security_group.master.*.id, [""]), 0)
+  value       = element(concat(aws_security_group.master[*].id, [""]), 0)
   description = "EMR master security group ID"
 }
 
 output "slave_security_group_id" {
-  value       = element(concat(aws_security_group.slave.*.id, [""]), 0)
+  value       = element(concat(aws_security_group.slave[*].id, [""]), 0)
   description = "EMR slave security group ID"
 }
 
 output "notebook_master_security_group_id" {
-  value       = element(concat(aws_security_group.notebook_master.*.id, [""]), 0)
+  value       = element(concat(aws_security_group.notebook_master[*].id, [""]), 0)
   description = "Notebook master security group ID"
 }
 
 output "notebook_instance_security_group_id" {
-  value       = element(concat(aws_security_group.notebook_instance.*.id, [""]), 0)
+  value       = element(concat(aws_security_group.notebook_instance[*].id, [""]), 0)
   description = "Notebook instance security group ID"
 }
 
