@@ -32,11 +32,6 @@ output "vpc_enable_dns_hostnames" {
   description = "Whether or not the VPC has DNS hostname support"
 }
 
-output "vpc_enable_classiclink" {
-  value       = module.vpc.vpc_enable_classiclink
-  description = "Whether or not the VPC has Classiclink enabled"
-}
-
 output "vpc_main_route_table_id" {
   value       = module.vpc.vpc_main_route_table_id
   description = "The ID of the main route table associated with this VPC. Note that you can change a VPC's main route table by using an aws_main_route_table_association."
@@ -207,49 +202,6 @@ output "public_route_table_owner_id" {
 }
 
 #--------------------------------------------------------------
-# Private Subnet
-#--------------------------------------------------------------
-
-output "private_subnet_ids" {
-  value       = module.vpc.private_subnet_ids
-  description = "The IDs of the Private subnets"
-}
-
-output "private_subnet_arns" {
-  value       = module.vpc.private_subnet_arns
-  description = "The ARNs of the Private subnets."
-}
-
-output "private_subnet_cidr_blocks" {
-  value       = module.vpc.private_subnet_cidr_blocks
-  description = "The CIDR blocks of the created Private subnets"
-}
-
-output "private_subnet_ipv6_cidr_block_association_ids" {
-  value       = module.vpc.private_subnet_ipv6_cidr_block_association_ids
-  description = "The association IDs for the IPv6 CIDR blocks of the Private subnets."
-}
-
-output "private_subnet_owner_ids" {
-  value       = module.vpc.private_subnet_owner_ids
-  description = "The ID of the AWS account that owns the Private subnets."
-}
-
-#--------------------------------------------------------------
-# Private Route Table
-#--------------------------------------------------------------
-
-output "private_route_table_ids" {
-  value       = module.vpc.private_route_table_ids
-  description = "The ID of the Private routing table."
-}
-
-output "private_route_table_owner_ids" {
-  value       = module.vpc.private_route_table_owner_ids
-  description = "The ID of the AWS account that owns the Private route table."
-}
-
-#--------------------------------------------------------------
 # Protected Subnet
 #--------------------------------------------------------------
 
@@ -282,14 +234,57 @@ output "protected_subnet_owner_ids" {
 # Protected Route Table
 #--------------------------------------------------------------
 
-output "protected_route_table_id" {
-  value       = module.vpc.protected_route_table_id
+output "protected_route_table_ids" {
+  value       = module.vpc.protected_route_table_ids
   description = "The ID of the Protected routing table."
 }
 
-output "protected_route_table_owner_id" {
-  value       = module.vpc.protected_route_table_owner_id
+output "protected_route_table_owner_ids" {
+  value       = module.vpc.protected_route_table_owner_ids
   description = "The ID of the AWS account that owns the Protected route table."
+}
+
+#--------------------------------------------------------------
+# Private Subnet
+#--------------------------------------------------------------
+
+output "private_subnet_ids" {
+  value       = module.vpc.private_subnet_ids
+  description = "The IDs of the Private subnets"
+}
+
+output "private_subnet_arns" {
+  value       = module.vpc.private_subnet_arns
+  description = "The ARNs of the Private subnets."
+}
+
+output "private_subnet_cidr_blocks" {
+  value       = module.vpc.private_subnet_cidr_blocks
+  description = "The CIDR blocks of the created Private subnets"
+}
+
+output "private_subnet_ipv6_cidr_block_association_ids" {
+  value       = module.vpc.private_subnet_ipv6_cidr_block_association_ids
+  description = "The association IDs for the IPv6 CIDR blocks of the Private subnets."
+}
+
+ouput "private_subnet_owner_ids" {
+  value       = module.vpc.private_subnet_owner_ids
+  description = "The ID of the AWS account that owns the Private subnets."
+}
+
+#--------------------------------------------------------------
+# Private Route Table
+#--------------------------------------------------------------
+
+output "private_route_table_id" {
+  value       = module.vpc.private_route_table_id
+  description = "The ID of the Private routing table."
+}
+
+output "private_route_table_owner_id" {
+  value       = module.vpc.private_route_table_owner_id
+  description = "The ID of the AWS account that owns the Private route table."
 }
 
 #--------------------------------------------------------------
