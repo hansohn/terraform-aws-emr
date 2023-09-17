@@ -268,7 +268,7 @@ output "private_subnet_ipv6_cidr_block_association_ids" {
   description = "The association IDs for the IPv6 CIDR blocks of the Private subnets."
 }
 
-ouput "private_subnet_owner_ids" {
+output "private_subnet_owner_ids" {
   value       = module.vpc.private_subnet_owner_ids
   description = "The ID of the AWS account that owns the Private subnets."
 }
