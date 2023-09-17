@@ -131,7 +131,7 @@ private_egress_acl_rules = [
   },
 ]
 
-intra_ingress_acl_rules = [
+protected_ingress_acl_rules = [
   {
     rule_number = 100
     rule_action = "allow"
@@ -149,7 +149,7 @@ intra_ingress_acl_rules = [
     ipv6_cidr_block = "::/0"
   },
 ]
-intra_egress_acl_rules = [
+protected_egress_acl_rules = [
   {
     rule_number = 100
     rule_action = "allow"

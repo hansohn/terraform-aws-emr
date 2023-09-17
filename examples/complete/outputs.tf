@@ -250,46 +250,46 @@ output "private_route_table_owner_ids" {
 }
 
 #--------------------------------------------------------------
-# Intra Subnet
+# Protected Subnet
 #--------------------------------------------------------------
 
-output "intra_subnet_ids" {
-  value       = module.vpc.intra_subnet_ids
-  description = "The IDs of the Intra subnets"
+output "protected_subnet_ids" {
+  value       = module.vpc.protected_subnet_ids
+  description = "The IDs of the Protected subnets"
 }
 
-output "intra_subnet_arns" {
-  value       = module.vpc.intra_subnet_arns
-  description = "The ARNs of the Intra subnets."
+output "protected_subnet_arns" {
+  value       = module.vpc.protected_subnet_arns
+  description = "The ARNs of the Protected subnets."
 }
 
-output "intra_subnet_cidr_blocks" {
-  value       = module.vpc.intra_subnet_cidr_blocks
-  description = "The CIDR blocks of the created Intra subnets"
+output "protected_subnet_cidr_blocks" {
+  value       = module.vpc.protected_subnet_cidr_blocks
+  description = "The CIDR blocks of the created Protected subnets"
 }
 
-output "intra_subnet_ipv6_cidr_block_association_ids" {
-  value       = module.vpc.intra_subnet_ipv6_cidr_block_association_ids
-  description = "The association IDs for the IPv6 CIDR blocks of the Intra subnets."
+output "protected_subnet_ipv6_cidr_block_association_ids" {
+  value       = module.vpc.protected_subnet_ipv6_cidr_block_association_ids
+  description = "The association IDs for the IPv6 CIDR blocks of the Protected subnets."
 }
 
-output "intra_subnet_owner_ids" {
-  value       = module.vpc.intra_subnet_owner_ids
-  description = "The ID of the AWS account that owns the Intra subnets."
+output "protected_subnet_owner_ids" {
+  value       = module.vpc.protected_subnet_owner_ids
+  description = "The ID of the AWS account that owns the Protected subnets."
 }
 
 #--------------------------------------------------------------
-# Intra Route Table
+# Protected Route Table
 #--------------------------------------------------------------
 
-output "intra_route_table_id" {
-  value       = module.vpc.intra_route_table_id
-  description = "The ID of the Intra routing table."
+output "protected_route_table_id" {
+  value       = module.vpc.protected_route_table_id
+  description = "The ID of the Protected routing table."
 }
 
-output "intra_route_table_owner_id" {
-  value       = module.vpc.intra_route_table_owner_id
-  description = "The ID of the AWS account that owns the Intra route table."
+output "protected_route_table_owner_id" {
+  value       = module.vpc.protected_route_table_owner_id
+  description = "The ID of the AWS account that owns the Protected route table."
 }
 
 #--------------------------------------------------------------

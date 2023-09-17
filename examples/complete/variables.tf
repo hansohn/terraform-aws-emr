@@ -263,21 +263,21 @@ variable "private_egress_acl_rules" {
 }
 
 #--------------------------------------------------------------
-# Intra Network
+# Protected Network
 #--------------------------------------------------------------
 
-variable "enable_intra_network" {
+variable "enable_protected_network" {
   type        = bool
   default     = true
-  description = "Enables intra network resource creation"
+  description = "Enables protected network resource creation"
 }
 
 #--------------------------------------------------------------
-# Intra Network ACL
+# Protected Network ACL
 #--------------------------------------------------------------
 
-variable "intra_ingress_acl_rules" {
-  description = "Intra subnets inbound network ACLs"
+variable "protected_ingress_acl_rules" {
+  description = "Protected subnets inbound network ACLs"
   type        = list(map(string))
 
   default = [
@@ -292,8 +292,8 @@ variable "intra_ingress_acl_rules" {
   ]
 }
 
-variable "intra_egress_acl_rules" {
-  description = "Intra subnets outbound network ACLs"
+variable "protected_egress_acl_rules" {
+  description = "Protected subnets outbound network ACLs"
   type        = list(map(string))
 
   default = [

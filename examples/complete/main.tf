@@ -134,8 +134,8 @@ module "vpc" {
     },
   ]
 
-  # intra acls
-  intra_ingress_acl_rules = [
+  # protected acls
+  protected_ingress_acl_rules = [
     {
       rule_number = 100
       rule_action = "allow"
@@ -153,7 +153,7 @@ module "vpc" {
       ipv6_cidr_block = "::/0"
     },
   ]
-  intra_egress_acl_rules = [
+  protected_egress_acl_rules = [
     {
       rule_number = 100
       rule_action = "allow"
