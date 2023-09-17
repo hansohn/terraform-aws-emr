@@ -7,7 +7,8 @@ provider "aws" {
 #--------------------------------------------------------------
 
 module "vpc" {
-  source  = "git::https://github.com/hansohn/terraform-aws-vpc.git?ref=0.2.0"
+  source  = "hansohn/vpc/aws"
+  version = ">= 1.0.0, < 2.0.0"
   context = module.this.context
   name    = "vpc"
 
@@ -133,8 +134,8 @@ module "vpc" {
     },
   ]
 
-  # intra acls
-  intra_ingress_acl_rules = [
+  # protected acls
+  protected_ingress_acl_rules = [
     {
       rule_number = 100
       rule_action = "allow"
@@ -152,7 +153,7 @@ module "vpc" {
       ipv6_cidr_block = "::/0"
     },
   ]
-  intra_egress_acl_rules = [
+  protected_egress_acl_rules = [
     {
       rule_number = 100
       rule_action = "allow"
